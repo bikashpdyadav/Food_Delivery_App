@@ -4,7 +4,12 @@ const RestroCardComponent = (props) => {
     const {resObj} = props;
 
     //destructuring
-    const {name, cuisines, avgRating, cloudinaryImageId} = resObj?.info;
+    const {
+        name, 
+        cuisines,
+        avgRating, 
+        cloudinaryImageId
+    } = resObj?.info;
     const deliveryTime = resObj?.info?.sla?.deliveryTime;
     
     // Conditional rendering to handle cases where data might not be available yet
