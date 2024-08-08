@@ -1,28 +1,37 @@
 import Shimmer from "./Shimmer";
 import { useParams } from "react-router-dom";
 import useRestaurantMenu from "../utils/useRestaurantMenu";
+import RestaurantCategory from "./RestaurantCategory";
+import { useState } from "react";
 
 const RestaurantMenu = () => {
     const {resId} = useParams();
-
+    const [showIndex,setshowIndex] = useState({value:false,idx:null});
     const resInfo = useRestaurantMenu(resId);
+    //console.log(resInfo);
     if(resInfo === null) return <Shimmer/>;
 
     const {name, cuisines, costForTwo, avgRating} = resInfo?.cards[2]?.card?.card?.info;
-
-    const {itemCards} = resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[6]?.card?.card;
+    const {cards} = resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR;
+    const categories = cards.filter((c) => c.card?.card?.["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory");
     
     return (
-        <div className="menu">
-            <h1>{name}</h1>
-            <p>{cuisines.join(', ')} - {costForTwo/100+' for two'}</p>
-            <h2>{avgRating+' stars'}</h2>
-            <h2>Menu</h2>
-            <ul>
-                {
-                    itemCards.map((item) => <li key={item.card.info.id}>{item.card.info.name} - {'Rs. '+item.card.info.price}</li>)
-                }
-            </ul>
+        <div>
+            <div className="text-center">
+                <h1 className="font-extrabold my-6 text-2xl">{name}</h1>
+                <p className="font-bold text-lg">
+                    {cuisines.join(', ')} - {costForTwo/100+' for two'}
+                </p>
+            </div>
+            {
+                categories.map((category,index)=> 
+                <RestaurantCategory 
+                key={categories?.card?.card?.title} 
+                data={category?.card?.card} 
+                setshowIndex={() => setshowIndex({value:!(showIndex.idx===index && showIndex.value),idx:index})}
+                showItems={index===showIndex.idx && showIndex.value}/>
+                )
+            }
         </div>
     );
 };
