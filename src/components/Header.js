@@ -92,11 +92,10 @@ const Header = () => {
                         <li
                             className="block px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer"
                             onClick={() => {
-                                navigate('/');
                                 setIsDropdownOpen(false);
                             }}
                         >
-                            Home
+                            <Link to="/">Home</Link>
                         </li>
                         <li
                             className="block px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer"

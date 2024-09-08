@@ -8,9 +8,13 @@ const cartSlice = createSlice({
     reducers: {
         addItem: (state,action) => {
             state.items.push(action.payload);
+            console.log(state.items.length);
         },
         removeItem: (state,action) => {
-            state.items = state.items.filter(item => item.id !== action.payload);
+            state.items = state.items.filter(item => 
+                item.card.info.id !== action.payload.card.info.id || 
+                item.card.info.price !== action.payload.card.info.price
+            );
         },
         clearCart: (state) => {
             state.items = [];
