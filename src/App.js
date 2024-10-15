@@ -1,31 +1,40 @@
-import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import Header from "./components/Header";
 import Body from "./components/Body";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
+import Contact from "./components/Contact"; 
 import About from "./components/About";
-import Contact from "./components/Contact";
 import Error from "./components/Error";
 import RestaurantMenu from "./components/RestaurantMenu";
-import UserContext from "./utils/UserContext";
 import { Provider } from "react-redux";
 import appStore from "./utils/appStore";
 import Cart from "./components/Cart";
+import Login from "./components/Login";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";  // Ensure this is imported
 
+
+
+const stripePromise = loadStripe("pk_test_51Q8jq8Ftd15Us6gbZkqd3fl8hIaEQw00HfvU7c0Usrqb5PqB5dM46dbedGFuWRLQf4JL6uVhoQAMXfpijtM5yOyg00DEJEKCCR");
 const AppLayout = () => {
-    const [userName,setuserName] = useState("Write your name!!");
+    const location = useLocation();
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/signup'; 
+    //const [userName,setuserName] = useState("Write your name!!");
     // useEffect(() => {
     //     const data = {name:"Bikash",};
     //     setuserName(data.name);
     // });
     return (
         <Provider store={appStore}>
-            <UserContext.Provider value = {{loggedInUser:userName,setuserName}}>
-                <div className="app">
-                    <Header/>
-                    <Outlet/>
+            <Elements stripe={stripePromise}>
+                <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-grow"><Outlet /></main>
+                {!isAuthPage && <Contact />}
                 </div>
-            </UserContext.Provider>
+            </Elements>
+            {/* <UserContext.Provider value = {{loggedInUser:userName,setuserName}}>    
+            </UserContext.Provider> */}
         </Provider>
     )
 }
@@ -44,16 +53,16 @@ const appRouter = createBrowserRouter([
                 element: <About/>,
             },
             {
-                path: "/contact",
-                element: <Contact/>,
-            },
-            {
                 path: "/restaurant/:resId",
                 element: <RestaurantMenu/>,
             },
             {
                 path: "/cart",
                 element: <Cart/>,
+            },
+            {
+                path: "/login",
+                element: <Login/>,
             }
         ],
         errorElement: <Error/>,

@@ -25,7 +25,7 @@ const Body = () => {
     };
     fetchData();
   }, []);
-  //console.log(ListofRestaurants);
+  
   const onlineStatus = useOnlineStatus();
   if (onlineStatus === false)
     return <h1>Looks like you are offline!! Check your internet connection</h1>;
@@ -85,6 +85,7 @@ const Body = () => {
           <Link
             key={restaurant.info.id}
             to={"/restaurant/" + restaurant.info.id}
+            state={{ restaurantInfo: restaurant.info }}
             className="m-2"
           >
             <RestroCardComponent resObj={restaurant} />
