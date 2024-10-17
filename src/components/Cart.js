@@ -95,14 +95,14 @@ const Cart = () => {
                     </div>
                 ) : (
                     <div>
-                        <div className="flex justify-between m-6">
+                        <div className="flex flex-wrap justify-center sm:justify-between items-center m-6">
                             <button
                                 className="bg-yellow-400 py-2 px-6 rounded-lg shadow-md hover:bg-yellow-500 transition-colors"
                                 onClick={() => navigate('/')}
                             >
                                 Add More Items
                             </button>
-                            <h2 className="text-xl font-bold mb-4">
+                            <h2 className="text-xl font-bold p-4">
                                 Total: ₹{calculateTotal().toFixed(2)}
                             </h2>
                         </div>
