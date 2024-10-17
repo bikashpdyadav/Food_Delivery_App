@@ -4,6 +4,7 @@ import ItemList from "./ItemList";
 import { clearCart, setCartItems } from "../utils/cartSlice";
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
     const cartItems = useSelector((store) => store.cart.items);
@@ -14,6 +15,7 @@ const Cart = () => {
     const [showClearCartModal, setShowClearCartModal] = useState(false); // State for Clear Cart modal
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
 
     // Load Cart from localStorage on component mount
     useEffect(() => {
@@ -80,14 +82,30 @@ const Cart = () => {
             <div className="w-full max-w-4xl mx-auto my-8 p-6 border border-solid border-gray-200 rounded-lg bg-white shadow-lg">
                 <ItemList items={cartItems} src={"cart"} className="space-y-4" />
                 {cartItems.length === 0 ? (
-                    <h1 className="text-xl font-bold md:text-2xl text-gray-600">
-                        Cart is Empty! Add some items to cart.
-                    </h1>
+                    <div>
+                        <h1 className="text-xl font-bold md:text-2xl text-gray-600 mb-4">
+                            Cart is Empty! Add some items to cart.
+                        </h1>
+                        <button
+                            className="bg-green-400 py-2 px-6 rounded-lg shadow-md hover:bg-green-600"
+                            onClick={() => navigate('/')}
+                        >
+                            Browse Items
+                        </button>
+                    </div>
                 ) : (
                     <div>
-                        <h2 className="text-xl font-bold mb-4">
-                            Total: ₹{calculateTotal().toFixed(2)}
-                        </h2>
+                        <div className="flex justify-between m-6">
+                            <button
+                                className="bg-yellow-400 py-2 px-6 rounded-lg shadow-md hover:bg-yellow-500 transition-colors"
+                                onClick={() => navigate('/')}
+                            >
+                                Add More Items
+                            </button>
+                            <h2 className="text-xl font-bold mb-4">
+                                Total: ₹{calculateTotal().toFixed(2)}
+                            </h2>
+                        </div>
                         <CardElement />
                         <div className="flex justify-center mt-4 space-x-4">
                             <button
@@ -151,7 +169,7 @@ const ConfirmationModal = ({ onConfirm, onCancel }) => {
 
 const SignInFirst = ({ onCancel }) => {
     return (
-        <div className="fixed inset-10 flex items-center justify-center">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-xl shadow-black max-w-sm w-full z-50">
                 <h1 className="text-2xl font-bold mb-4">Please sign in first</h1>
                 <button

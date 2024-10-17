@@ -82,7 +82,7 @@ const Login = () => {
     };
 
     return (
-        <div className="h-screen bg-pink-100 p-4 pb-0 md:p-8">
+        <div className="h-screen bg-pink-100 pl-12 pr-12 pt-20 pb-0">
             <form
                 onSubmit={(e) => e.preventDefault()}
                 className="max-w-md mx-auto p-8 bg-pink-300 rounded-lg bg-opacity-80 shadow-lg"

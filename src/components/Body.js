@@ -12,18 +12,7 @@ const Body = () => {
   const [isFiltered, setisFiltered] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // const response = await fetch(
-      //   "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.96340&lng=77.58550&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-      // );
-      // const json = await response.json();
-
-      // setListofRestaurants(
-      //   json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-      // );
-      setfilteredRestaurants(ListofRestaurants);
-    };
-    fetchData();
+    setfilteredRestaurants(ListofRestaurants);
   }, []);
   
   const onlineStatus = useOnlineStatus();
@@ -49,18 +38,6 @@ const Body = () => {
           {isFiltered ? "Reset" : "Top Rated Restaurants"}
         </button>
 
-        {/* <div className="m-4 p-4 flex flex-col sm:flex-row items-center">
-    <label className="mb-2 sm:mb-0 sm:mr-2">Username:</label>
-    <input
-      type="input"
-      className="border border-solid border-black px-4 py-2 font-bold rounded-lg hover:bg-gray-200"
-      value={loggedInUser}
-      onChange={(e) => {
-        setuserName(e.target.value);
-      }}
-    />
-  </div> */}
-
         <div className="w-full sm:w-3/4 md:w-1/2 flex items-center justify-center mb-4 sm:mb-0">
           <input
             type="text"
@@ -79,18 +56,22 @@ const Body = () => {
         </div>
       </div>
 
-
-      <div className="flex flex-wrap justify-center mx-2 sm:mx-11">
-        {filteredRestaurants.length === 0 ? <h1 className="text-2xl font-semibold m-4 p-4">Nothing to Show!!</h1> : filteredRestaurants.map((restaurant) => (
-          <Link
-            key={restaurant.info.id}
-            to={"/restaurant/" + restaurant.info.id}
-            state={{ restaurantInfo: restaurant.info }}
-            className="m-2"
-          >
-            <RestroCardComponent resObj={restaurant} />
-          </Link>
-        ))}
+      {/* Flexbox Layout */}
+      <div className="flex flex-wrap justify-center gap-6">
+        {filteredRestaurants.length === 0 ? (
+          <h1 className="text-2xl font-semibold m-4 p-4">Nothing to Show!!</h1>
+        ) : (
+          filteredRestaurants.map((restaurant) => (
+            <Link
+              key={restaurant.info.id}
+              to={"/restaurant/" + restaurant.info.id}
+              state={{ restaurantInfo: restaurant.info }}
+              className="m-2 flex-grow max-w-xs"
+            >
+              <RestroCardComponent resObj={restaurant} />
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );

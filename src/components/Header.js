@@ -59,7 +59,7 @@ const Header = () => {
     };
 
     const handleButtonClick = () => {
-        if(!user)  navigate('/login');
+        if (!user) navigate('/login');
     }
 
     return (
@@ -93,12 +93,21 @@ const Header = () => {
                     </ul>
 
                     {/* Mobile Menu */}
-                    <div className="relative lg:hidden">
+                    <div className="relative lg:hidden flex">
                         <button
-                            className="font-bold px-3 py-2 rounded transition-colors"
+                            className="font-bold px-3 py-2"
                             onClick={toggleDropdown}
                         >
                             Menu
+                        </button>
+                        <button
+                            className="font-bold px-3 py-2 cursor-pointer"
+                            onClick={() => {
+                                navigate("/login");
+                                setIsDropdownOpen(false);
+                            }}
+                        >
+                            {user ? <DisplayUserCard /> : "Sign In"}
                         </button>
                         {isDropdownOpen && (
                             <ul
@@ -141,22 +150,13 @@ const Header = () => {
                                 >
                                     Cart
                                 </li>
-                                <li
-                                    className="block px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer"
-                                    onClick={() => {
-                                        navigate("/login");
-                                        setIsDropdownOpen(false);
-                                    }}
-                                >
-                                    {user ? <DisplayUserCard /> : "Sign In"}
-                                </li>
                             </ul>
                         )}
                     </div>
 
                     {showScrollTop && (
                         <button
-                            className="fixed bottom-8 right-8 p-4 text-black bg-pink-200 rounded-[100%] shadow-md hover:bg-pink-300 transition-colors"
+                            className="fixed bottom-8 right-8 p-4 text-black bg-pink-200 rounded-[100%] shadow-md hover:bg-pink-300 transition-colors z-50"
                             onClick={scrollToTop}
                         >
                             ↑

@@ -102,7 +102,7 @@ const About = () => {
                 Explore our menu, connect with your favorite restaurants, and enjoy
                 great food delivered to your door!
               </p>
-              <button className="bg-green-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-green-600 transition-all" onClick={() => navigate('/')}>
+              <button className="bg-green-400 py-2 px-6 rounded-lg shadow-md hover:bg-green-600" onClick={() => navigate('/')}>
                 Start Ordering
               </button>
             </div>
