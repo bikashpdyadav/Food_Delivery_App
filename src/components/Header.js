@@ -148,7 +148,7 @@ const Header = () => {
                                         setIsDropdownOpen(false);
                                     }}
                                 >
-                                    Cart
+                                    Cart ({cartItems.length})
                                 </li>
                             </ul>
                         )}
