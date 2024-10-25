@@ -2,20 +2,96 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import ItemList from "./ItemList";
 import { clearCart, setCartItems } from "../utils/cartSlice";
-import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { LOGO_URL } from '../utils/constants';
 
 const Cart = () => {
     const cartItems = useSelector((store) => store.cart.items);
     const user = useSelector((store) => store.user);
     const dispatch = useDispatch();
-    const [processing, setProcessing] = useState(false);
     const [showSignInModal, setShowSignInModal] = useState(false);
-    const [showClearCartModal, setShowClearCartModal] = useState(false); // State for Clear Cart modal
-    const stripe = useStripe();
-    const elements = useElements();
+    const [showClearCartModal, setShowClearCartModal] = useState(false);
     const navigate = useNavigate();
+    const [orderId, setOrderId] = useState(null);
+    const [totalAmount, setTotalAmount] = useState(0);
+
+    function loadScript(src) {
+        return new Promise((resolve) => {
+            const script = document.createElement("script");
+            script.src = src;
+            script.onload = () => {
+                resolve(true);
+            };
+            script.onerror = () => {
+                resolve(false);
+            };
+            document.body.appendChild(script);
+        });
+    }
+
+    async function displayRazorpay() {
+        const res = await loadScript(
+            "https://checkout.razorpay.com/v1/checkout.js"
+        );
+
+        if (!res) {
+            alert("Razorpay SDK failed to load. Are you online?");
+            return;
+        }
+
+        const result = await axios.post("http://localhost:5000/payment/orders",{totalAmount});
+
+        if (!result) {
+            alert("Server error. Are you online?");
+            return;
+        }
+        //console.log(result.data, "hi");
+        const { amount, id: order_id, currency } = result.data;
+        setOrderId(order_id);
+        const options = {
+            key: "rzp_test_8psTtwuAncSGhB", // Enter the Key ID generated from the Dashboard
+            amount: amount.toString(),
+            currency: currency,
+            name: "Food_Delivery_App",
+            description: "Test Transaction",
+            image: { LOGO_URL },
+            order_id: order_id,
+            handler: async function (response) {
+                const data = {
+                    orderCreationId: order_id,
+                    razorpayPaymentId: response.razorpay_payment_id,
+                    razorpayOrderId: response.razorpay_order_id,
+                    razorpaySignature: response.razorpay_signature,
+                };
+
+                const result = await axios.post(
+                    "http://localhost:5000/payment/success",
+                    data
+                );
+
+                if (result.status === 200) {
+                    dispatch(clearCart());
+                    localStorage.removeItem(`cart_${user.uid}`);
+                    navigate('/success', { state: { amount: totalAmount, id: orderId } });
+                }
+            },
+            prefill: {
+                name: "Food_Delivery_App",
+                email: "team@food_delivery_app.com",
+                contact: "9999999999",
+            },
+            notes: {
+                address: "BDA, AMBEDKAR INSTITUTE OF TECHNOLOGY, Outer Ring Rd, Near Gnana Bharati, 2<sup>nd</sup> Stage, Nagarbhavi, Bengaluru, Karnataka, 560056",
+            },
+            theme: {
+                color: "#61dafb",
+            },
+        };
+
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+    }
 
     // Load Cart from localStorage on component mount
     useEffect(() => {
@@ -30,45 +106,16 @@ const Cart = () => {
 
     // Calculate Total Price
     const calculateTotal = () => {
-        return cartItems.reduce((acc, item) =>
-            acc + (item.card.info.defaultPrice ? item.card.info.defaultPrice : item.card.info.price) * item.quantity,
+        const total = cartItems.reduce(
+            (acc, item) =>
+                acc + (item.card.info.defaultPrice ? item.card.info.defaultPrice : item.card.info.price) * item.quantity,
             0
-        ) / 100; // price is in cents
+        );
+        return total;
     };
-
-    // Handle Payment with Stripe
-    const handlePayment = async () => {
-        if (!user) {
-            setShowSignInModal(true);
-            return;
-        }
-        if (!stripe || !elements) return;
-
-        setProcessing(true);
-
-        const response = await fetch('/create-payment-intent', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: calculateTotal() * 100, currency: 'usd' })
-        });
-
-        const { clientSecret } = await response.json();
-
-        const cardElement = elements.getElement(CardElement);
-        const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-            payment_method: { card: cardElement }
-        });
-
-        if (error) {
-            toast.error(`Payment failed: ${error.message}`);
-        } else if (paymentIntent.status === 'succeeded') {
-            toast.success("Payment successful!");
-            dispatch(clearCart());
-            if (user) localStorage.removeItem(`cart_${user.uid}`);
-        }
-
-        setProcessing(false);
-    };
+    useEffect(() => {
+        setTotalAmount(calculateTotal());
+    }, []);
 
     const handleClearCart = () => {
         dispatch(clearCart());
@@ -103,10 +150,9 @@ const Cart = () => {
                                 Add More Items
                             </button>
                             <h2 className="text-xl font-bold p-4">
-                                Total: ₹{calculateTotal().toFixed(2)}
+                                Total: ₹{(totalAmount/100).toFixed(2)}
                             </h2>
                         </div>
-                        <CardElement />
                         <div className="flex justify-center mt-4 space-x-4">
                             <button
                                 className="p-3 border border-solid border-gray-500 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -116,10 +162,16 @@ const Cart = () => {
                             </button>
                             <button
                                 className="p-3 border border-solid border-blue-500 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                onClick={handlePayment}
-                                disabled={processing || !stripe || cartItems.length === 0}
+                                onClick={() => {
+                                    if (user) {
+                                        displayRazorpay();
+                                    } else {
+                                        setShowSignInModal(true);
+                                    }
+                                }}
+                                disabled={cartItems.length === 0}
                             >
-                                {processing ? "Processing..." : "Pay Now"}
+                                Pay Now
                             </button>
                         </div>
                     </div>

@@ -6,7 +6,7 @@ const Contact = () => {
             {/* Contact Us Section */}
             <div className="flex flex-col items-center md:items-start md:w-1/2 mb-4 md:mb-0">
                 <p className='p-1 font-semibold text-center md:text-left'>Contact Us</p>
-                <p className="ml-0 text-center md:text-left">+91 8252587109</p>
+                <p className="ml-0 text-center md:text-left">+91 9999999999</p>
                 <p className="ml-0 text-center md:text-left">team@food_delivery_app.com</p>
                 <p className='p-1 font-semibold text-center md:text-left'>Customer Support Available</p>
                 <p className='p-1 text-center md:text-left'>Available 24hr</p>

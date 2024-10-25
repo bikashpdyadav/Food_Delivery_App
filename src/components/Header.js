@@ -1,12 +1,10 @@
 import { LOGO_URL } from "../utils/constants";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useOnlineStatus from "../utils/useOnlineStatus";
 import { useSelector } from "react-redux";
 import DisplayUserCard from "./DisplayUserCard";
 
 const Header = () => {
-    const onlineStatus = useOnlineStatus();
     const cartItems = useSelector((store) => store.cart.items);
     const user = useSelector((store) => store.user);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -70,9 +68,6 @@ const Header = () => {
                 <div>
                     {/* Desktop Menu */}
                     <ul className="hidden lg:flex text-xl md:text-2xl lg:text-3xl">
-                        <li className="px-2 sm:px-4 font-bold text-lg">
-                            Online Status: {onlineStatus ? "🟢" : "🔴"}
-                        </li>
                         <li className="px-2 sm:px-4 font-bold text-lg cursor-pointer" onClick={() => navigate("/")}>
                             Home
                         </li>
