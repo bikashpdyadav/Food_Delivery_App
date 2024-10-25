@@ -74,7 +74,7 @@ const OrderSuccessPage = () => {
                 sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
               >
                 <Typography variant="body2">Payment Method:</Typography>
-                <Typography variant="body2">Credit Card</Typography>
+                <Typography variant="body2">UPI</Typography>
               </Box>
               <Divider sx={{ mt: 2 }} />
             </Box>

@@ -13,7 +13,6 @@ const Cart = () => {
     const [showSignInModal, setShowSignInModal] = useState(false);
     const [showClearCartModal, setShowClearCartModal] = useState(false);
     const navigate = useNavigate();
-    const [orderId, setOrderId] = useState(null);
     const [totalAmount, setTotalAmount] = useState(0);
 
     function loadScript(src) {
@@ -48,7 +47,6 @@ const Cart = () => {
         }
         //console.log(result.data, "hi");
         const { amount, id: order_id, currency } = result.data;
-        setOrderId(order_id);
         const options = {
             key: "rzp_test_8psTtwuAncSGhB", // Enter the Key ID generated from the Dashboard
             amount: amount.toString(),
@@ -69,11 +67,11 @@ const Cart = () => {
                     "http://localhost:5000/payment/success",
                     data
                 );
-
+                
                 if (result.status === 200) {
                     dispatch(clearCart());
                     localStorage.removeItem(`cart_${user.uid}`);
-                    navigate('/success', { state: { amount: totalAmount, id: orderId } });
+                    navigate('/success', { state: { amount: totalAmount/100, id: order_id } });
                 }
             },
             prefill: {
