@@ -48,7 +48,7 @@ const Cart = () => {
         //console.log(result.data, "hi");
         const { amount, id: order_id, currency } = result.data;
         const options = {
-            key: "rzp_test_8psTtwuAncSGhB", // Enter the Key ID generated from the Dashboard
+            key: process.env.DASHBOARD_KEY_ID, // Enter the Key ID generated from the Dashboard
             amount: amount.toString(),
             currency: currency,
             name: "Food_Delivery_App",
