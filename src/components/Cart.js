@@ -39,7 +39,7 @@ const Cart = () => {
             return;
         }
 
-        const result = await axios.post("http://localhost:5000/payment/orders",{totalAmount});
+        const result = await axios.post("https://food-delivery-app-payment.onrender.com/payment/orders",{totalAmount});
 
         if (!result) {
             alert("Server error. Are you online?");
@@ -64,7 +64,7 @@ const Cart = () => {
                 };
 
                 const result = await axios.post(
-                    "http://localhost:5000/payment/success",
+                    "https://food-delivery-app-payment.onrender.com/payment/success",
                     data
                 );
                 
